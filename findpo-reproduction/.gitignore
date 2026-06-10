@@ -1,0 +1,24 @@
+# caches / envs
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# data, model weights, training outputs (never commit these)
+data/
+outputs/
+models/
+checkpoints/
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+*.gguf
+
+# secrets — never commit tokens
+.env
+*.token
+hf_token*
+*.key

@@ -1,0 +1,27 @@
+# FinDPO training config — bf16 LoRA, closest to the paper's A100-40GB setup.
+# Use this if you have >=40GB VRAM; faster and numerically cleaner than 4-bit.
+
+base_model: meta-llama/Meta-Llama-3-8B-Instruct
+four_bit: false                # full bf16 weights (needs ~16GB for weights + optimizer/activations)
+
+lora_r: 16
+lora_alpha: 16
+lora_dropout: 0.05
+target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+epochs: 5
+batch_size: 4
+grad_accum: 4                  # effective batch = 16
+learning_rate: 5.0e-6
+lr_scheduler: cosine
+warmup_ratio: 0.1
+weight_decay: 0.0
+beta: 0.1
+optim: adamw_torch
+
+max_length: 512
+max_prompt_length: 384
+bf16: true
+gradient_checkpointing: true
+seed: 42
+logging_steps: 20

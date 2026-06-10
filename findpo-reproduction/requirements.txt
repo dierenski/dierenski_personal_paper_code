@@ -1,0 +1,23 @@
+# FinDPO reproduction — pinned, mutually-compatible (late-2024) stack tested for Llama-3 QLoRA DPO.
+#
+# IMPORTANT: install a CUDA-matching PyTorch FIRST (do not rely on the generic wheel), e.g.:
+#   pip install "torch>=2.3,<2.6" --index-url https://download.pytorch.org/whl/cu121
+# then:  pip install -r requirements.txt
+#
+# bitsandbytes>=0.43 ships official Windows wheels (your RTX 3070 16GB box is fine).
+# On Apple Silicon, drop bitsandbytes and use configs/lora_a100.yaml with four_bit:false (MPS).
+
+transformers==4.45.2
+trl==0.11.4
+peft==0.13.2
+datasets==3.0.1
+accelerate==0.34.2
+bitsandbytes==0.44.1 ; platform_system != "Darwin"
+sentencepiece
+pyyaml
+scikit-learn
+scipy
+pandas
+numpy
+yfinance        # only for the portfolio backtest (public price data)
+matplotlib

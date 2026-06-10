@@ -1,0 +1,32 @@
+# FinDPO training config — 4-bit QLoRA, tuned to fit a 16GB consumer GPU (e.g. RTX 3070 16GB).
+# The paper used an A100-40GB with bf16 LoRA; QLoRA + ref_model=None + gradient checkpointing
+# brings peak VRAM well under 16GB. If you still OOM: lower max_length to 384, keep batch_size 1,
+# raise grad_accum, or close other GPU apps.
+
+base_model: meta-llama/Meta-Llama-3-8B-Instruct   # ungated mirror: NousResearch/Meta-Llama-3-8B-Instruct
+four_bit: true                 # nf4 + double-quant + bf16 compute
+
+# --- LoRA (exact from paper §4.1.2) ---
+lora_r: 16
+lora_alpha: 16
+lora_dropout: 0.05
+target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+# --- optimization ---
+epochs: 5                      # paper: 5 epochs
+batch_size: 1                  # per-device; keep at 1 on 16GB
+grad_accum: 16                 # effective batch = 16
+learning_rate: 5.0e-6          # NOT specified in paper; sensible DPO-LoRA default. Tune if F1 < ~0.84
+lr_scheduler: cosine
+warmup_ratio: 0.1              # paper mentions a warm-up ratio (value unspecified)
+weight_decay: 0.0              # paper mentions weight decay as regularization (value unspecified)
+beta: 0.1                      # DPO temperature; NOT specified in paper; 0.1 is the standard default
+optim: paged_adamw_8bit        # memory-frugal; matches AdamW family the paper used
+
+# --- sequence / precision / memory ---
+max_length: 512
+max_prompt_length: 384
+bf16: true
+gradient_checkpointing: true
+seed: 42
+logging_steps: 20
